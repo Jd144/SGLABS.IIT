@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IIT Indore - Biophysics & Biomedical Engineering Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+
+        /* ── Admin Panel Styles (BPBME Style) ── */
+        #adm-sidebar {
+            width: 260px;
+            background: #0d1117;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #21262d;
+        }
+        .adm-logo-box {
+            padding: 18px 16px;
+            border-bottom: 1px solid #21262d;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .adm-logo-badge {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg,#0F4C81,#4DA8DA);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 800; font-size: 11px;
+            text-align: center; line-height: 1.2;
+            font-family: 'Poppins', sans-serif;
+        }
+        .adm-logo-text { color: #e6edf3; font-size: 13px; font-weight: 700; display: block; }
+        .adm-logo-sub  { color: #6e7681; font-size: 11px; }
+        .adm-nav { padding: 12px 10px; flex: 1; overflow-y: auto; }
+        .adm-sec-label {
+            font-size: 10px; font-weight: 700; color: #6e7681;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            padding: 11px 8px 5px;
+        }
+        .adm-btn {
+            display: flex; align-items: center; gap: 9px;
+            padding: 9px 11px; border-radius: 8px;
+            font-size: 13px; font-weight: 500; color: #8b949e;
+            cursor: pointer; transition: all .2s; margin-bottom: 2px;
+            background: none; border: none; width: 100%; text-align: left;
+            font-family: 'Inter', sans-serif;
+        }
+        .adm-btn:hover { background: #1a2a3a; color: #4DA8DA; }
+        .adm-btn.active { background: #1a2a3a; color: #4DA8DA; }
+        .adm-btn .badge {
+            margin-left: auto; background: #0F4C81; color: #fff;
+            font-size: 10px; font-weight: 700; padding: 1px 7px;
+            border-radius: 100px;
+        }
+        .adm-btn .badge-r {
+            margin-left: auto; background: #EF4444; color: #fff;
+            font-size: 10px; font-weight: 700; padding: 1px 7px;
+            border-radius: 100px;
+        }
+        .adm-footer {
+            padding: 12px 14px;
+            border-top: 1px solid #21262d;
+        }
+        .adm-user-row { display: flex; align-items: center; gap: 9px; }
+        .adm-av {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: linear-gradient(135deg,#0F4C81,#4DA8DA);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 700; font-size: 12px;
+        }
+        .adm-un { color: #e6edf3; font-size: 13px; font-weight: 700; }
+        .adm-ur { color: #6e7681; font-size: 11px; display: flex; align-items: center; gap: 4px; }
+        .rdot { width: 6px; height: 6px; border-radius: 50%; background: #22C55E; display: inline-block; }
+
+        /* Panel area */
+        #adm-main-panel { flex: 1; background: #f8fafc; overflow-y: auto; max-height: 90vh; }
+        .ap { display: none; }
+        .ap.active { display: block; }
+
+        /* Form inputs in admin */
+        .adm-input {
+            width: 100%; padding: 9px 12px;
+            border: 1.5px solid #e2e8f0; border-radius: 8px;
+            background: #fff; color: #1f2937; font-size: 13px;
+            font-family: 'Inter', sans-serif; outline: none;
+            transition: border-color .2s;
+        }
+        .adm-input:focus { border-color: #4DA8DA; box-shadow: 0 0 0 3px rgba(77,168,218,.1); }
+        .adm-label { display: block; font-size: 12px; font-weight: 600; color: #4b5563; margin-bottom: 5px; }
+        .adm-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+        .adm-card-hd { padding: 12px 18px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; }
+        .adm-card-title { font-size: 14px; font-weight: 700; color: #1f2937; }
+        .adm-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .adm-table th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: .5px; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; }
+        .adm-table td { padding: 11px 16px; border-bottom: 1px solid #e2e8f0; color: #1f2937; }
+        .adm-table tr:last-child td { border-bottom: none; }
+        .adm-table tr:hover td { background: #f8fafc; }
+        .btn-pri { padding: 9px 18px; background: linear-gradient(135deg,#0F4C81,#2A7F9E); color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all .2s; }
+        .btn-pri:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(15,76,129,.3); }
+        .btn-sm { padding: 5px 11px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #e2e8f0; background: #f1f5f9; color: #4b5563; transition: all .2s; font-family: 'Inter', sans-serif; }
+        .btn-sm:hover { border-color: #0F4C81; color: #0F4C81; }
+        .btn-del:hover { border-color: #EF4444; color: #EF4444; }
+        .status-pub { background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 100px; }
+        .status-dr  { background: #fef9c3; color: #854d0e; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 100px; }
+        .status-pe  { background: #fee2e2; color: #b91c1c; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 100px; }
+
+        /* Toast */
+        #toast { position: fixed; bottom: 22px; right: 22px; background: #1a1a2e; color: #fff; padding: 13px 18px; border-radius: 10px; font-size: 14px; font-weight: 500; box-shadow: 0 8px 28px rgba(0,0,0,.3); z-index: 9999; display: none; align-items: center; gap: 8px; max-width: 320px; }
+        #toast.show { display: flex; }
+
+        /* Announcement bar */
+        #ann-bar { background: linear-gradient(90deg,#0F4C81,#2A7F9E); color: #fff; padding: 7px 0; overflow: hidden; position: relative; z-index: 100; }
+        .ann-scroll { display: flex; gap: 60px; animation: marquee 50s linear infinite; white-space: nowrap; }
+        .ann-scroll span::before { content: "📢 "; }
+        .ann-scroll span { font-size: 13px; font-weight: 500; }
+        @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        #ann-bar.off { display: none; }
+    </style>
+</head>
+<body
+x-data="labCMS()"
+class="text-slate-800"
+:style="{ backgroundColor: themeColors.background }">
+
+<!-- ══════════════════════════════════════════
+     ANNOUNCEMENT SCROLLING BAR
+══════════════════════════════════════════ -->
+<div id="ann-bar" x-show="showAnnBar">
+    <div class="ann-scroll" id="ann-scroll-el">
+        <template x-for="(a, i) in announcements" :key="i">
+            <span x-text="a"></span>
+        </template>
+        <!-- duplicate for seamless loop -->
+        <template x-for="(a, i) in announcements" :key="'d'+i">
+            <span x-text="a"></span>
+        </template>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ORIGINAL NAVBAR (unchanged)
+══════════════════════════════════════════ -->
+<nav class="text-white shadow-md sticky top-0 z-50 transition-all duration-300" :style="{ backgroundColor: themeColors.navy }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-20">
+            <div class="flex items-center gap-3 cursor-pointer" @click="activePage = 'home'">
+                <template x-if="labLogo">
+                    <img :src="labLogo" alt="Brand Logo" class="h-12 w-12 object-contain rounded-md bg-white p-1">
+                </template>
+                <div>
+                    <h1 class="text-xl font-bold font-poppins" x-text="homeData.labCode">IIT Indore</h1>
+                    <p class="text-xs opacity-80" x-text="homeData.labSubName">Biophysics & Biomedical Engineering Lab</p>
+                </div>
+            </div>
+
+            <div class="hidden md:block">
+                <div class="ml-10 flex items-baseline space-x-2">
+                    <template x-for="(menuItem, index) in menuOrder" :key="index">
+                        <button @click="activePage = menuItem.toLowerCase()"
+                                class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 cursor-pointer capitalize"
+                                :class="activePage === menuItem.toLowerCase() ? 'bg-black/20 shadow-inner' : 'hover:bg-white/10'"
+                                x-text="pageNames[menuItem.toLowerCase()] || menuItem">
+                        </button>
+                    </template>
+                </div>
+            </div>
+
+            <div class="hidden md:flex items-center gap-2">
+                <template x-if="!isLoggedIn">
+                    <button @click="activePage = 'login-gateway'" class="px-4 py-2 rounded-full text-xs font-bold bg-amber-400 text-slate-900 flex items-center gap-1.5 hover:bg-amber-300 transition shadow-sm cursor-pointer">
+                        <i data-lucide="lock" class="w-3.5 h-3.5"></i> Admin Login
+                    </button>
+                </template>
+                <template x-if="isLoggedIn">
+                    <button @click="activePage = 'admin'" class="px-4 py-2 rounded-full text-xs font-bold bg-emerald-400 text-slate-900 flex items-center gap-1.5 hover:bg-emerald-300 transition shadow-sm cursor-pointer">
+                        <i data-lucide="shield" class="w-3.5 h-3.5"></i> Admin Panel
+                    </button>
+                </template>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     MAIN PAGES (ALL ORIGINAL, UNCHANGED)
+══════════════════════════════════════════ -->
+<main class="min-h-[75vh]">
+
+    <!-- LOGIN PAGE -->
+    <div x-show="activePage === 'login-gateway'" class="max-w-md mx-auto px-4 py-20" x-transition>
+        <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 space-y-5">
+            <div class="text-center">
+                <div class="inline-flex p-3 bg-amber-50 rounded-full text-amber-500 mb-2">
+                    <i data-lucide="lock" class="w-6 h-6"></i>
+                </div>
+                <h2 class="text-2xl font-bold font-poppins text-slate-900">Secure Admin Node Entrance</h2>
+            </div>
+            <form @submit.prevent="handleLogin()" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Registered Mail</label>
+                    <input type="email" x-model="loginEmail" required class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-amber-400 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Security Key Phrase</label>
+                    <input type="password" x-model="loginPassword" required class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-amber-400 outline-none">
+                </div>
+                <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-lg text-xs transition cursor-pointer">
+                    Authenticate Parameters
+                </button>
+            </form>
+            <div class="p-3 bg-slate-50 rounded-lg text-center text-[10px] text-slate-400 font-mono">
+                Default: superadmin@iiti.ac.in / admin123
+            </div>
+        </div>
+    </div>
+
+    <!-- HOME PAGE (original) -->
+    <div x-show="activePage === 'home'" x-transition>
+        <header class="text-white py-20 px-4 text-center transition-all duration-500"
+                :style="{ background: `linear-gradient(135deg, ${themeColors.navy} 0%, #1e3a8a 100%)` }">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl md:text-5xl font-extrabold mb-4 font-poppins tracking-tight" x-text="homeData.headline"></h2>
+                <p class="text-lg md:text-xl opacity-90 max-w-2xl mx-auto font-light" x-text="homeData.subheadline"></p>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-8">
+                    <section class="bg-white p-6 md:p-8 rounded-2xl shadow-xs border border-slate-100">
+                        <h3 class="text-xl font-bold mb-6 pb-3 border-b font-poppins" :style="{ color: themeColors.navy }">Principal Investigator</h3>
+                        <div class="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+                            <img :src="homeData.piImage" alt="PI" class="w-44 h-44 rounded-2xl object-cover shadow-sm border-4" :style="{ borderColor: themeColors.sky }">
+                            <div class="space-y-3 text-center sm:text-left">
+                                <h4 class="text-2xl font-bold text-slate-900" x-text="homeData.piName"></h4>
+                                <p class="text-sm font-semibold" :style="{ color: themeColors.sky }" x-text="homeData.piRole"></p>
+                                <div class="text-slate-600 text-sm leading-relaxed" x-html="homeData.piBio"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="bg-white p-6 md:p-8 rounded-2xl shadow-xs border border-slate-100">
+                        <h3 class="text-xl font-bold mb-6 pb-3 border-b font-poppins flex items-center gap-2" :style="{ color: themeColors.navy }">
+                            <i data-lucide="clapperboard" class="w-5 h-5"></i> Lab Media & Operations Stream
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <template x-for="media in labMediaList" :key="media.id">
+                                <div class="bg-slate-50 border rounded-xl overflow-hidden shadow-2xs flex flex-col justify-between">
+                                    <div class="relative bg-black h-48 flex items-center justify-center overflow-hidden">
+                                        <template x-if="media.type === 'video'">
+                                            <video :src="media.url" controls class="w-full h-full object-cover"></video>
+                                        </template>
+                                        <template x-if="media.type === 'image'">
+                                            <img :src="media.url" class="w-full h-full object-cover hover:scale-105 transition duration-300" />
+                                        </template>
+                                    </div>
+                                    <div class="p-4 space-y-1">
+                                        <h4 class="font-bold text-slate-900 text-sm" x-text="media.title"></h4>
+                                        <p class="text-xs text-slate-600 leading-relaxed" x-text="media.desc"></p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </section>
+
+                    <section class="bg-white p-6 md:p-8 rounded-2xl shadow-xs border border-slate-100">
+                        <h3 class="text-xl font-bold mb-6 font-poppins flex items-center gap-2" :style="{ color: themeColors.navy }">
+                            <i data-lucide="image" class="w-5 h-5"></i> Lab Gallery Layout
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <template x-for="img in gallery" :key="img.id">
+                                <div class="group relative rounded-xl overflow-hidden shadow-xs h-40">
+                                    <img :src="img.url" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+                                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3">
+                                        <p class="text-white text-xs font-medium" x-text="img.title"></p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="lg:col-span-1">
+                    <section class="bg-white p-6 rounded-2xl shadow-xs border border-slate-100 sticky top-28">
+                        <h3 class="text-xl font-bold mb-6 pb-3 border-b font-poppins flex items-center gap-2" :style="{ color: themeColors.navy }">
+                            <i data-lucide="newspaper" class="w-5 h-5"></i> News & Updates
+                        </h3>
+                        <div class="space-y-6">
+                            <template x-for="item in news" :key="item.id">
+                                <div class="flex gap-3 border-l-2 pl-3" :style="{ borderLeftColor: themeColors.sky }">
+                                    <div>
+                                        <span class="text-[10px] font-bold tracking-wider text-slate-400 block" x-text="item.date"></span>
+                                        <p class="text-sm text-slate-700 mt-0.5" x-text="item.text"></p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESEARCH PAGE (original) -->
+    <div x-show="activePage === 'research'" class="max-w-4xl mx-auto px-4 py-12" x-transition>
+        <h2 class="text-3xl font-bold mb-8 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['research'] || 'Research'"></h2>
+        <div class="space-y-6">
+            <template x-for="r in researchAreas" :key="r.id">
+                <div class="bg-white p-6 rounded-xl shadow-xs border border-slate-100">
+                    <h3 class="text-xl font-bold mb-2 text-slate-900" x-text="r.title"></h3>
+                    <p class="text-slate-600 text-sm leading-relaxed" x-text="r.desc"></p>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- PEOPLE PAGE (original) -->
+    <div x-show="activePage === 'people'" class="max-w-7xl mx-auto px-4 py-12" x-transition>
+        <h2 class="text-3xl font-bold mb-6 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['people'] || 'Our Superstars'"></h2>
+        <div class="flex flex-wrap justify-center gap-2 mb-10">
+            <template x-for="cat in ['All', 'Faculty', 'Post Doc', 'PhD', 'MSc', 'MTech', 'Intern', 'Alumni']">
+                <button @click="peopleFilter = cat"
+                        class="px-4 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer"
+                        :style="peopleFilter === cat ? { backgroundColor: themeColors.sky, color: '#fff', borderColor: themeColors.sky } : { backgroundColor: '#fff', color: '#475569' }"
+                        x-text="cat"></button>
+            </template>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <template x-for="person in people" :key="person.id">
+                <div x-show="peopleFilter === 'All' || person.category === peopleFilter"
+                     class="bg-white p-5 rounded-2xl shadow-2xs border border-slate-100 flex flex-col justify-between text-center space-y-4">
+                    <div>
+                        <img :src="person.img || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80'" class="w-24 h-24 rounded-full mx-auto object-cover mb-2 ring-4 ring-blue-100">
+                        <h4 class="font-bold text-slate-900 text-base" x-text="person.name"></h4>
+                        <p class="text-xs font-semibold inline-block px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 mt-1" x-text="person.role"></p>
+                        <template x-if="person.researchArea">
+                            <p class="text-[11px] text-slate-500 font-medium mt-3 bg-slate-50 p-2 rounded border border-dashed" x-text="'🎯 ' + person.researchArea"></p>
+                        </template>
+                        <template x-if="person.bio">
+                            <p class="text-xs text-slate-600 mt-2 text-left italic border-l-2 pl-2" x-text="person.bio"></p>
+                        </template>
+                    </div>
+                    <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                        <span class="font-mono text-[10px]" x-text="person.email"></span>
+                        <template x-if="person.scholarUrl">
+                            <a :href="person.scholarUrl" target="_blank" class="text-blue-500 font-bold hover:underline inline-flex items-center gap-0.5">🎓 Scholar</a>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- PUBLICATIONS PAGE (original) -->
+    <div x-show="activePage === 'publications'" class="max-w-4xl mx-auto px-4 py-12" x-transition>
+        <h2 class="text-3xl font-bold mb-6 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['publications'] || 'Publications'"></h2>
+        <div class="mb-8 max-w-md mx-auto relative">
+            <input type="text" x-model="pubSearch" placeholder="Search papers..." class="w-full px-4 py-2.5 pl-10 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+            <div class="absolute left-3 top-3.5 text-slate-400"><i data-lucide="search" class="w-4 h-4"></i></div>
+        </div>
+        <div class="space-y-4">
+            <template x-for="pub in filteredPublications" :key="pub.id">
+                <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-xs transition hover:border-l-4" :style="{ borderLeftColor: themeColors.sky }">
+                    <span class="text-[10px] px-2 py-0.5 rounded text-white font-bold uppercase tracking-wider" :style="{ backgroundColor: themeColors.navy }" x-text="pub.year"></span>
+                    <h4 class="text-base font-bold text-slate-900 mt-2" x-text="pub.title"></h4>
+                    <p class="text-xs text-slate-600 mt-1 italic" x-text="pub.authors"></p>
+                    <p class="text-[11px] text-slate-400 mt-1 font-semibold" x-text="pub.journal"></p>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- OPPORTUNITIES PAGE (original) -->
+    <div x-show="activePage === 'opportunities'" class="max-w-4xl mx-auto px-4 py-12" x-transition>
+        <h2 class="text-3xl font-bold mb-8 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['opportunities'] || 'Opportunities'"></h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <template x-for="opp in opportunities" :key="opp.id">
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase" :class="opp.status === 'Open' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" x-text="opp.status"></span>
+                            <span class="text-xs text-slate-400 font-medium" x-text="'Deadline: ' + opp.deadline"></span>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-base" x-text="opp.position"></h3>
+                        <p class="text-xs font-semibold text-blue-600 mb-2" x-text="opp.type"></p>
+                        <p class="text-xs text-slate-600 leading-relaxed" x-text="opp.desc"></p>
+                    </div>
+                    <button class="mt-4 w-full bg-slate-900 text-white text-xs font-semibold py-2 rounded-xl">Apply Now</button>
+                </div>
+            </template>
+        </div>
+        <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-100 shadow-xs">
+            <h3 class="text-lg font-bold text-slate-900 mb-4">Application Form</h3>
+            <form @submit.prevent="showToast('Application submitted successfully!')" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Applicant Name</label>
+                        <input type="text" required class="w-full px-3 py-2 border rounded-lg text-xs bg-slate-50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Email ID</label>
+                        <input type="email" required class="w-full px-3 py-2 border rounded-lg text-xs bg-slate-50">
+                    </div>
+                </div>
+                <button type="submit" class="w-full text-white font-bold py-2 rounded-lg text-xs transition cursor-pointer" :style="{ backgroundColor: themeColors.navy }">Submit Application</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- CONTACT PAGE (original) -->
+    <div x-show="activePage === 'contact'" class="max-w-5xl mx-auto px-4 py-12" x-transition>
+        <h2 class="text-3xl font-bold mb-8 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['contact'] || 'Contact'"></h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-xs space-y-4">
+                <h3 class="text-lg font-bold text-slate-900">Lab Location</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">IIT Indore Campus, Khandwa Road, Simrol, Madhya Pradesh, India.</p>
+            </div>
+            <div class="bg-slate-200 rounded-2xl h-48 flex flex-col justify-center items-center text-slate-400 font-medium">
+                <i data-lucide="map-pin" class="w-6 h-6 mb-1 text-rose-500"></i>
+                <span class="text-xs">Map Sensor Tracking Area</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         ADMIN PAGE — BPBME STYLE FULL PANEL
+    ══════════════════════════════════════════ -->
+    <div x-show="activePage === 'admin'" x-transition>
+        <template x-if="!isLoggedIn">
+            <div class="p-12 text-center bg-white border rounded-2xl shadow-sm space-y-4 max-w-md mx-auto mt-12">
+                <p class="text-red-500 font-bold">🚫 Unauthorized. Please login first.</p>
+                <button @click="activePage = 'login-gateway'" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs">Go to Login</button>
+            </div>
+        </template>
+
+        <template x-if="isLoggedIn">
+            <div class="max-w-[1400px] mx-auto px-4 py-6">
+                <!-- Admin top bar -->
+                <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+                    <div>
+                        <div class="text-xl font-bold text-slate-800" x-text="adminPanelTitle">Dashboard</div>
+                        <div class="text-xs text-slate-400">BPBME CMS · Full Owner Access</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button @click="activePage = 'home'; handleLogout()" class="btn-sm btn-del" style="color:#ef4444;border-color:#ef4444">⏏ Logout</button>
+                        <button @click="activePage = 'home'" class="btn-pri text-xs px-4 py-2">← Back to Site</button>
+                    </div>
+                </div>
+
+                <!-- Admin grid: sidebar + content -->
+                <div class="flex gap-0 rounded-2xl overflow-hidden border border-slate-200 shadow-xl min-h-[680px]">
+                    <!-- SIDEBAR -->
+                    <div id="adm-sidebar" style="min-width:260px;max-width:260px">
+                        <div class="adm-logo-box">
+                            <div class="adm-logo-badge">BP<br>BME</div>
+                            <div><span class="adm-logo-text">BPBME CMS</span><span class="adm-logo-sub">Admin Dashboard</span></div>
+                        </div>
+                        <nav class="adm-nav">
+                            <div class="adm-sec-label">Overview</div>
+                            <button class="adm-btn" :class="adminSubTab==='dashboard'?'active':''" @click="adminSubTab='dashboard';adminPanelTitle='Dashboard'">
+                                <span>📊</span> Dashboard
+                            </button>
+
+                            <div class="adm-sec-label">Content Editor</div>
+                            <button class="adm-btn" :class="adminSubTab==='text-editor'?'active':''" @click="adminSubTab='text-editor';adminPanelTitle='Text & Branding Editor'">
+                                <span>✏️</span> Text & Branding
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='page-names'?'active':''" @click="adminSubTab='page-names';adminPanelTitle='Page Name Editor'">
+                                <span>🏷️</span> Page Names <span class="badge">New</span>
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='announce'?'active':''" @click="adminSubTab='announce';adminPanelTitle='Announcements'">
+                                <span>📢</span> Announcements <span class="badge" x-text="announcements.length"></span>
+                            </button>
+
+                            <div class="adm-sec-label">Database</div>
+                            <button class="adm-btn" :class="adminSubTab==='team-adder'?'active':''" @click="adminSubTab='team-adder';adminPanelTitle='People & Team'">
+                                <span>👥</span> People & Team <span class="badge" x-text="people.length"></span>
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='pubs-mgr'?'active':''" @click="adminSubTab='pubs-mgr';adminPanelTitle='Publications Manager'">
+                                <span>📚</span> Publications <span class="badge" x-text="publications.length"></span>
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='research-mgr'?'active':''" @click="adminSubTab='research-mgr';adminPanelTitle='Research Areas'">
+                                <span>🔬</span> Research Areas
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='opps-control'?'active':''" @click="adminSubTab='opps-control';adminPanelTitle='Opportunities'">
+                                <span>💼</span> Opportunities <span class="badge" x-text="opportunities.length"></span>
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='news-mgr'?'active':''" @click="adminSubTab='news-mgr';adminPanelTitle='News & Updates'">
+                                <span>📰</span> News & Updates <span class="badge" x-text="news.length"></span>
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='media-control'?'active':''" @click="adminSubTab='media-control';adminPanelTitle='Media Manager'">
+                                <span>🎞️</span> Media Manager
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='gallery-mgr'?'active':''" @click="adminSubTab='gallery-mgr';adminPanelTitle='Gallery'">
+                                <span>🖼️</span> Gallery
+                            </button>
+
+                            <div class="adm-sec-label">Settings</div>
+                            <button class="adm-btn" :class="adminSubTab==='users-provision'?'active':''" @click="adminSubTab='users-provision';adminPanelTitle='User Management'">
+                                <span>🔐</span> User Management
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='theme-settings'?'active':''" @click="adminSubTab='theme-settings';adminPanelTitle='Theme & Colors'">
+                                <span>🎨</span> Theme & Colors
+                            </button>
+                        </nav>
+                        <div class="adm-footer">
+                            <div class="adm-user-row">
+                                <div class="adm-av" x-text="currentUser ? currentUser.name.substring(0,2).toUpperCase() : 'SG'"></div>
+                                <div>
+                                    <div class="adm-un" x-text="currentUser ? currentUser.name : 'Admin'"></div>
+                                    <div class="adm-ur"><span class="rdot"></span><span x-text="currentUser ? currentUser.role : 'Owner'"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MAIN PANEL CONTENT -->
+                    <div id="adm-main-panel"
+     class="flex-1 p-6 overflow-y-auto"
+     style="max-height:85vh"
+     :style="{ backgroundColor: themeColors.background }">
+
+                        <!-- ── DASHBOARD ── -->
+                        <div x-show="adminSubTab === 'dashboard'" class="space-y-5">
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="adm-card p-4 flex items-center gap-3">
+                                    <div style="width:44px;height:44px;border-radius:11px;background:#EBF4FD;display:flex;align-items:center;justify-content:center;font-size:20px">👥</div>
+                                    <div>
+                                        <div class="font-bold text-2xl text-slate-800" x-text="people.length"></div>
+                                        <div class="text-xs text-slate-500">Team Members</div>
+                                    </div>
+                                </div>
+                                <div class="adm-card p-4 flex items-center gap-3">
+                                    <div style="width:44px;height:44px;border-radius:11px;background:#F0FDF4;display:flex;align-items:center;justify-content:center;font-size:20px">📚</div>
+                                    <div>
+                                        <div class="font-bold text-2xl text-slate-800" x-text="publications.length"></div>
+                                        <div class="text-xs text-slate-500">Publications</div>
+                                    </div>
+                                </div>
+                                <div class="adm-card p-4 flex items-center gap-3">
+                                    <div style="width:44px;height:44px;border-radius:11px;background:#FFF7ED;display:flex;align-items:center;justify-content:center;font-size:20px">💼</div>
+                                    <div>
+                                        <div class="font-bold text-2xl text-slate-800" x-text="opportunities.length"></div>
+                                        <div class="text-xs text-slate-500">Opportunities</div>
+                                    </div>
+                                </div>
+                                <div class="adm-card p-4 flex items-center gap-3">
+                                    <div style="width:44px;height:44px;border-radius:11px;background:#F3EEFF;display:flex;align-items:center;justify-content:center;font-size:20px">📢</div>
+                                    <div>
+                                        <div class="font-bold text-2xl text-slate-800" x-text="announcements.length"></div>
+                                        <div class="text-xs text-slate-500">Announcements</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div class="adm-card">
+                                    <div class="adm-card-hd"><div class="adm-card-title">Quick Actions</div></div>
+                                    <div class="p-4 flex flex-col gap-2">
+                                        <button class="btn-pri text-sm" @click="adminSubTab='team-adder';adminPanelTitle='People & Team'">➕ Add Team Member</button>
+                                        <button class="btn-pri text-sm" @click="adminSubTab='pubs-mgr';adminPanelTitle='Publications Manager'">➕ Add Publication</button>
+                                        <button class="btn-pri text-sm" @click="adminSubTab='news-mgr';adminPanelTitle='News & Updates'">➕ Post News</button>
+                                        <button class="btn-pri text-sm" @click="adminSubTab='announce';adminPanelTitle='Announcements'">📢 Manage Announcements</button>
+                                        <button class="btn-pri text-sm" @click="adminSubTab='page-names';adminPanelTitle='Page Name Editor'">🏷️ Rename Pages</button>
+                                    </div>
+                                </div>
+                                <div class="adm-card">
+                                    <div class="adm-card-hd"><div class="adm-card-title">Current Page Names</div></div>
+                                    <div class="p-4 space-y-2 text-xs">
+                                        <template x-for="(page, key) in pageNames" :key="key">
+                                            <div class="flex justify-between items-center bg-slate-50 rounded-lg px-3 py-2 border">
+                                                <span class="text-slate-500 font-mono capitalize" x-text="key"></span>
+                                                <span class="font-bold text-slate-800" x-text="page"></span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── TEXT & BRANDING EDITOR ── -->
+                        <div x-show="adminSubTab === 'text-editor'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd"><div class="adm-card-title">📝 Word-by-Word Content Editor</div></div>
+                                <div class="p-5 space-y-4 text-xs">
+                                    <div class="fg">
+                                        <label class="adm-label">Brand Logo URL</label>
+                                        <input type="text" x-model="labLogo" class="adm-input" placeholder="Paste logo image URL...">
+                                         <div class="mt-3">
+    <label class="adm-label">Upload Image From Device</label>
+
+    <input type="file"
+           accept="image/*"
+           @change="uploadImage($event)"
+           class="adm-input">
+</div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Lab Code Title (Navbar)</label>
+                                            <input type="text" x-model="homeData.labCode" class="adm-input">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Lab Sub-Name (Navbar)</label>
+                                            <input type="text" x-model="homeData.labSubName" class="adm-input">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">Hero Main Headline</label>
+                                        <input type="text" x-model="homeData.headline" class="adm-input">
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">Hero Subheadline</label>
+                                        <textarea rows="2" x-model="homeData.subheadline" class="adm-input" style="min-height:60px;resize:vertical"></textarea>
+                                    </div>
+                                    <hr class="border-slate-100">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">PI Name</label>
+                                            <input type="text" x-model="homeData.piName" class="adm-input">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">PI Role / Designation</label>
+                                            <input type="text" x-model="homeData.piRole" class="adm-input">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">PI Image URL</label>
+                                        <input type="text" x-model="homeData.piImage" class="adm-input">
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">PI Biography (HTML allowed)</label>
+                                        <textarea rows="4" x-model="homeData.piBio" class="adm-input" style="min-height:90px;resize:vertical;font-family:monospace"></textarea>
+                                    </div>
+                                    <button class="btn-pri" @click="showToast('✅ Content updated live on site!')">💾 Apply Changes</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── PAGE NAME EDITOR ── -->
+                        <div x-show="adminSubTab === 'page-names'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">🏷️ Page Name Editor</div>
+                                    <span style="font-size:12px;color:#6e7681">Changes reflect instantly in navbar</span>
+                                </div>
+                                <div class="p-5">
+                                    <div style="background:linear-gradient(135deg,#EBF4FD,#F0F9FF);border:1px solid #BAE6FD;border-radius:10px;padding:14px;margin-bottom:18px">
+                                        <div style="font-size:13px;font-weight:700;color:#0F4C81;margin-bottom:5px">💡 How it works</div>
+                                        <div style="font-size:12px;color:#4b5563;line-height:1.7">Change the display name of any page — the name shown in the navbar and as the page heading. The page itself stays the same, only the label changes.</div>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <template x-for="(_, key) in pageNames" :key="key">
+                                            <div class="flex items-center gap-3 bg-white border border-slate-200 rounded-xl p-3">
+                                                <div style="width:80px;font-size:12px;font-weight:700;color:#9ca3af;text-transform:capitalize;font-family:monospace" x-text="key"></div>
+                                                <div style="color:#cbd5e1;font-size:16px">→</div>
+                                                <input type="text" x-model="pageNames[key]" class="adm-input" style="flex:1" :placeholder="'Display name for ' + key">
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <div class="mt-4 flex gap-3">
+                                        <button class="btn-pri" @click="showToast('✅ Page names updated in navbar!')">💾 Save Page Names</button>
+                                        <button class="btn-sm" @click="resetPageNames()">🔄 Reset to Defaults</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- MENU ORDER -->
+                            <div class="adm-card">
+                                <div class="adm-card-hd"><div class="adm-card-title">📋 Navbar Menu Order</div></div>
+                                <div class="p-5 space-y-3">
+                                    <div style="font-size:12px;color:#6e7681;margin-bottom:10px">Currently showing pages (in this order):</div>
+                                    <template x-for="(item, idx) in menuOrder" :key="idx">
+                                        <div class="flex items-center gap-3 bg-slate-50 border rounded-xl p-3">
+                                            <span style="font-size:12px;color:#9ca3af;font-weight:700;width:20px" x-text="idx+1+'. '"></span>
+                                            <span style="font-size:13px;font-weight:600;color:#1f2937;flex:1" x-text="pageNames[item.toLowerCase()] || item"></span>
+                                            <div class="flex gap-1">
+                                                <button class="btn-sm" @click="moveMenuUp(idx)" x-show="idx > 0">↑</button>
+                                                <button class="btn-sm" @click="moveMenuDown(idx)" x-show="idx < menuOrder.length - 1">↓</button>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <button class="btn-pri mt-2" @click="showToast('✅ Menu order saved!')">💾 Save Order</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── ANNOUNCEMENTS ── -->
+                        <div x-show="adminSubTab === 'announce'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">📢 Scrolling Announcement Bar</div>
+                                    <div class="flex gap-2 items-center">
+                                        <span style="font-size:12px;font-weight:600;color:#6e7681">Bar:</span>
+                                        <button @click="showAnnBar = !showAnnBar; showToast(showAnnBar ? '✅ Announcement bar shown' : '❌ Announcement bar hidden')"
+                                            :style="showAnnBar ? 'background:#22C55E;color:#fff' : 'background:#EF4444;color:#fff'"
+                                            style="padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;border:none;cursor:pointer"
+                                            x-text="showAnnBar ? '● Visible' : '○ Hidden'">
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="p-4 space-y-2">
+                                    <template x-for="(ann, i) in announcements" :key="i">
+                                        <div class="flex items-center gap-2 bg-slate-50 border rounded-lg p-2.5">
+                                            <span style="font-size:13px;flex:1;color:#374151" x-text="ann"></span>
+                                            <button class="btn-sm" @click="editAnn(i)">✏️ Edit</button>
+                                            <button class="btn-sm btn-del" @click="deleteAnn(i)">✕</button>
+                                        </div>
+                                    </template>
+                                </div>
+                                <div class="p-4 pt-0 flex gap-2">
+                                    <input type="text" x-model="newAnnText" class="adm-input" placeholder="Type new announcement text..." style="flex:1">
+                                    <button class="btn-pri" @click="addAnn()">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── PEOPLE & TEAM ── -->
+                        <div x-show="adminSubTab === 'team-adder'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">👥 Add / Edit Team Members</div>
+                                    <button class="btn-pri text-xs" @click="openAddMemberForm()">+ Add Member</button>
+                                </div>
+
+                                <!-- Add form -->
+                                <div x-show="showMemberForm" class="p-5 border-b border-slate-100 bg-slate-50 space-y-3">
+                                    <div class="font-bold text-sm text-slate-700 mb-2" x-text="editingMemberId ? '✏️ Edit Member' : '➕ New Member'"></div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        <div>
+                                            <label class="adm-label">Name *</label>
+                                            <input type="text" x-model="teamForm.name" class="adm-input" placeholder="e.g. Dr. Amit Kumar">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Role / Designation *</label>
+                                            <input type="text" x-model="teamForm.role" class="adm-input" placeholder="e.g. Senior PhD Scholar">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Category *</label>
+                                            <select x-model="teamForm.category" class="adm-input" style="appearance:auto">
+                                                <option value="Faculty">Faculty / PI</option>
+                                                <option value="Post Doc">Post Doc</option>
+                                                <option value="PhD">PhD Scholar</option>
+                                                <option value="MSc">MSc Student</option>
+                                                <option value="MTech">MTech Student</option>
+                                                <option value="Intern">Intern</option>
+                                                <option value="Alumni">Alumni</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Email</label>
+                                            <input type="email" x-model="teamForm.email" class="adm-input" placeholder="name@iiti.ac.in">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Google Scholar URL</label>
+                                            <input type="url" x-model="teamForm.scholarUrl" class="adm-input" placeholder="https://scholar.google.com/...">
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Research Area</label>
+                                            <input type="text" x-model="teamForm.researchArea" class="adm-input" placeholder="e.g. Biophotonics">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Photo URL</label>
+                                            <input type="text" x-model="teamForm.img" class="adm-input" placeholder="https://... or leave blank for default">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">Short Bio</label>
+                                        <textarea rows="2" x-model="teamForm.bio" class="adm-input" style="resize:vertical" placeholder="Short introduction paragraph..."></textarea>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="btn-pri" @click="saveMember()">💾 Save Member</button>
+                                        <button class="btn-sm" @click="showMemberForm=false;editingMemberId=null">Cancel</button>
+                                    </div>
+                                </div>
+
+                                <!-- Table -->
+                                <div style="overflow-x:auto">
+                                    <table class="adm-table">
+                                        <thead><tr><th>Photo</th><th>Name</th><th>Role</th><th>Category</th><th>Status</th><th>Actions</th></tr></thead>
+                                        <tbody>
+                                            <template x-for="p in people" :key="p.id">
+                                                <tr>
+                                                    <td><img :src="p.img || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=60&q=80'" style="width:36px;height:36px;border-radius:50%;object-fit:cover"></td>
+                                                    <td style="font-weight:600" x-text="p.name"></td>
+                                                    <td style="color:#4b5563" x-text="p.role"></td>
+                                                    <td><span class="status-pub" x-text="p.category"></span></td>
+                                                    <td><span class="status-pub">Active</span></td>
+                                                    <td>
+                                                        <div style="display:flex;gap:5px">
+                                                            <button class="btn-sm" @click="editMemberForm(p)">✏️ Edit</button>
+                                                            <button class="btn-sm btn-del" @click="people = people.filter(x => x.id !== p.id); showToast('Member removed.')">🗑 Remove</button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── PUBLICATIONS ── -->
+                        <div x-show="adminSubTab === 'pubs-mgr'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">📚 Publications Manager</div>
+                                    <button class="btn-pri text-xs" @click="showPubForm=true;editingPubId=null;pubForm={title:'',authors:'',journal:'',year:''}">+ Add Publication</button>
+                                </div>
+                                <!-- Add form -->
+                                <div x-show="showPubForm" class="p-5 border-b bg-slate-50 space-y-3">
+                                    <div class="font-bold text-sm text-slate-700 mb-2" x-text="editingPubId ? '✏️ Edit Publication' : '➕ Add Publication'"></div>
+                                    <div>
+                                        <label class="adm-label">Title *</label>
+                                        <input type="text" x-model="pubForm.title" class="adm-input" placeholder="Full paper title...">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Authors *</label>
+                                            <input type="text" x-model="pubForm.authors" class="adm-input" placeholder="Author A., Author B., et al.">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Journal / Conference *</label>
+                                            <input type="text" x-model="pubForm.journal" class="adm-input" placeholder="Journal Name · Publisher">
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Year *</label>
+                                            <input type="text" x-model="pubForm.year" class="adm-input" placeholder="2024">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">DOI (optional)</label>
+                                            <input type="text" x-model="pubForm.doi" class="adm-input" placeholder="10.xxxx/xxxxx">
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="btn-pri" @click="savePub()">💾 Save</button>
+                                        <button class="btn-sm" @click="showPubForm=false">Cancel</button>
+                                    </div>
+                                </div>
+                                <div style="overflow-x:auto">
+                                    <table class="adm-table">
+                                        <thead><tr><th>Title</th><th>Authors</th><th>Journal</th><th>Year</th><th>Actions</th></tr></thead>
+                                        <tbody>
+                                            <template x-for="pub in publications" :key="pub.id">
+                                                <tr>
+                                                    <td style="font-weight:600;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" x-text="pub.title.substring(0,50)+'...'"></td>
+                                                    <td style="color:#4b5563" x-text="pub.authors.split(',')[0]+'...'"></td>
+                                                    <td x-text="pub.journal.split('·')[0]"></td>
+                                                    <td x-text="pub.year"></td>
+                                                    <td>
+                                                        <div style="display:flex;gap:5px">
+                                                            <button class="btn-sm" @click="editPub(pub)">✏️</button>
+                                                            <button class="btn-sm btn-del" @click="publications=publications.filter(x=>x.id!==pub.id);showToast('Publication deleted.')">🗑</button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── RESEARCH AREAS ── -->
+                        <div x-show="adminSubTab === 'research-mgr'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">🔬 Research Areas Manager</div>
+                                    <button class="btn-pri text-xs" @click="addResearchArea()">+ Add Area</button>
+                                </div>
+                                <div class="p-4 space-y-3">
+                                    <template x-for="r in researchAreas" :key="r.id">
+                                        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;display:flex;align-items:start;gap:12px">
+                                            <div style="flex:1">
+                                                <div style="font-weight:700;font-size:14px;margin-bottom:3px" x-text="r.title"></div>
+                                                <div style="font-size:13px;color:#4b5563" x-text="r.desc.substring(0,90)+'...'"></div>
+                                            </div>
+                                            <div style="display:flex;gap:6px">
+                                                <button class="btn-sm" @click="editRA(r)">✏️ Edit</button>
+                                                <button class="btn-sm btn-del" @click="researchAreas=researchAreas.filter(x=>x.id!==r.id);showToast('Deleted.')">🗑</button>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── OPPORTUNITIES ── -->
+                        <div x-show="adminSubTab === 'opps-control'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">💼 Opportunities Manager</div>
+                                    <button class="btn-pri text-xs" @click="showOppForm=true;editingOppId=null;oppForm={position:'',type:'Internship',deadline:'',status:'Open',desc:''}">+ Add Position</button>
+                                </div>
+                                <div x-show="showOppForm" class="p-5 border-b bg-slate-50 space-y-3">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Position Title *</label>
+                                            <input type="text" x-model="oppForm.position" class="adm-input" placeholder="e.g. Research Intern">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Type</label>
+                                            <select x-model="oppForm.type" class="adm-input" style="appearance:auto">
+                                                <option>Internship</option><option>PhD Position</option><option>Postdoc</option><option>JRF/SRF</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Deadline</label>
+                                            <input type="text" x-model="oppForm.deadline" class="adm-input" placeholder="e.g. July 31, 2024">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Status</label>
+                                            <select x-model="oppForm.status" class="adm-input" style="appearance:auto">
+                                                <option>Open</option><option>Closed</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">Description</label>
+                                        <textarea rows="2" x-model="oppForm.desc" class="adm-input" style="resize:vertical"></textarea>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="btn-pri" @click="saveOpp()">💾 Save</button>
+                                        <button class="btn-sm" @click="showOppForm=false">Cancel</button>
+                                    </div>
+                                </div>
+                                <div style="overflow-x:auto">
+                                    <table class="adm-table">
+                                        <thead><tr><th>Position</th><th>Type</th><th>Deadline</th><th>Status</th><th>Actions</th></tr></thead>
+                                        <tbody>
+                                            <template x-for="o in opportunities" :key="o.id">
+                                                <tr>
+                                                    <td style="font-weight:600" x-text="o.position"></td>
+                                                    <td x-text="o.type"></td>
+                                                    <td x-text="o.deadline"></td>
+                                                    <td><span :class="o.status==='Open'?'status-pub':'status-pe'" x-text="o.status"></span></td>
+                                                    <td>
+                                                        <div style="display:flex;gap:5px">
+                                                            <button class="btn-sm" @click="editOpp(o)">✏️</button>
+                                                            <button class="btn-sm btn-del" @click="opportunities=opportunities.filter(x=>x.id!==o.id);showToast('Deleted.')">🗑</button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── NEWS ── -->
+                        <div x-show="adminSubTab === 'news-mgr'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">📰 News & Updates Manager</div>
+                                    <button class="btn-pri text-xs" @click="showNewsForm=true;editingNewsId=null;newsForm={date:'',text:''}">+ Add News</button>
+                                </div>
+                                <div x-show="showNewsForm" class="p-5 border-b bg-slate-50 space-y-3">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Date *</label>
+                                            <input type="text" x-model="newsForm.date" class="adm-input" placeholder="e.g. June 05, 2026">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">News Text *</label>
+                                        <textarea rows="2" x-model="newsForm.text" class="adm-input" style="resize:vertical" placeholder="News content here..."></textarea>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="btn-pri" @click="saveNews()">💾 Save</button>
+                                        <button class="btn-sm" @click="showNewsForm=false">Cancel</button>
+                                    </div>
+                                </div>
+                                <div class="p-4 space-y-2">
+                                    <template x-for="(n, i) in news" :key="n.id">
+                                        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:9px;padding:12px 14px;display:flex;align-items:start;gap:10px">
+                                            <div style="flex:1">
+                                                <div style="font-size:11px;font-weight:700;color:#9ca3af;margin-bottom:3px" x-text="n.date"></div>
+                                                <div style="font-size:13px;color:#374151" x-text="n.text"></div>
+                                            </div>
+                                            <div style="display:flex;gap:5px">
+                                                <button class="btn-sm" @click="editNews(n)">✏️</button>
+                                                <button class="btn-sm btn-del" @click="news=news.filter(x=>x.id!==n.id);showToast('Deleted.')">🗑</button>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── MEDIA MANAGER ── -->
+                        <div x-show="adminSubTab === 'media-control'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">🎞️ Lab Media Manager</div>
+                                    <button class="btn-pri text-xs" @click="showMediaForm=!showMediaForm">+ Add Media</button>
+                                </div>
+                                <div x-show="showMediaForm" class="p-5 border-b bg-slate-50 space-y-3">
+                                    <div class="grid grid-cols-3 gap-3">
+                                        <div>
+                                            <label class="adm-label">Title *</label>
+                                            <input type="text" x-model="mediaForm.title" class="adm-input">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Type</label>
+                                            <select x-model="mediaForm.type" class="adm-input" style="appearance:auto">
+                                                <option value="image">Image</option>
+                                                <option value="video">Video</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">URL *</label>
+                                            <input type="text" x-model="mediaForm.url" class="adm-input" placeholder="https://...">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">Description</label>
+                                        <textarea rows="2" x-model="mediaForm.desc" class="adm-input" style="resize:vertical"></textarea>
+                                    </div>
+                                    <button class="btn-pri" @click="addLabMedia()">+ Append Media</button>
+                                </div>
+                                <div class="p-4 space-y-2">
+                                    <template x-for="m in labMediaList" :key="m.id">
+                                        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:9px;padding:12px;display:flex;justify-content:space-between;align-items:center">
+                                            <div>
+                                                <span style="font-weight:700;font-size:13px" x-text="m.title"></span>
+                                                <span style="font-size:10px;color:#4DA8DA;font-weight:700;margin-left:8px;text-transform:uppercase" x-text="m.type"></span>
+                                                <p style="font-size:12px;color:#6b7280;margin-top:2px" x-text="m.desc"></p>
+                                            </div>
+                                            <button class="btn-sm btn-del" @click="labMediaList=labMediaList.filter(x=>x.id!==m.id);showToast('Media removed.')">🗑 Delete</button>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── GALLERY ── -->
+                        <div x-show="adminSubTab === 'gallery-mgr'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">🖼️ Gallery Manager</div>
+                                    <button class="btn-pri text-xs" @click="showGalleryForm=!showGalleryForm">+ Add Photo</button>
+                                </div>
+                                <div x-show="showGalleryForm" class="p-5 border-b bg-slate-50 space-y-3">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Title *</label>
+                                            <input type="text" x-model="galleryForm.title" class="adm-input">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Image URL </label>
+                                            <input type="text" x-model="galleryForm.url" class="adm-input" placeholder="https://...">
+<input type="file"
+       accept="image/*"
+       @change="uploadImage($event, galleryItem, 'image')"
+       class="adm-input">
+                                        </div>
+                                    </div>
+                                    <button class="btn-pri" @click="addGalleryItem()">+ Add to Gallery</button>
+                                </div>
+                                <div class="p-4 grid grid-cols-3 gap-3">
+                                    <template x-for="img in gallery" :key="img.id">
+                                        <div style="position:relative;border-radius:10px;overflow:hidden;border:1px solid #e2e8f0">
+                                            <img :src="img.url" style="width:100%;height:100px;object-fit:cover">
+                                            <div style="padding:8px;background:#f8fafc">
+                                                <div style="font-size:12px;font-weight:600" x-text="img.title"></div>
+                                            </div>
+                                            <button class="btn-sm btn-del" style="position:absolute;top:5px;right:5px;background:rgba(0,0,0,.6);border-color:transparent;color:#fff" @click="gallery=gallery.filter(x=>x.id!==img.id);showToast('Photo removed.')">✕</button>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── USER MANAGEMENT ── -->
+                        <div x-show="adminSubTab === 'users-provision'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd"><div class="adm-card-title">🔐 Create / Manage Users</div></div>
+                                <div class="p-5 space-y-3">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Full Name</label>
+                                            <input type="text" x-model="userForm.name" class="adm-input" placeholder="User Full Name">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Email ID</label>
+                                            <input type="email" x-model="userForm.email" class="adm-input" placeholder="user@iiti.ac.in">
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Password</label>
+                                            <input type="password" x-model="userForm.password" class="adm-input">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Role</label>
+                                            <select x-model="userForm.role" class="adm-input" style="appearance:auto">
+                                                <option>Super Admin</option>
+                                                <option>Admin</option>
+                                                <option>Editor</option>
+                                                <option>Member</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button class="btn-pri" @click="provisionUser()">➕ Create User</button>
+                                </div>
+                            </div>
+                            <div class="adm-card">
+                                <div class="adm-card-hd"><div class="adm-card-title">Registered Users</div></div>
+                                <div style="overflow-x:auto">
+                                    <table class="adm-table">
+                                        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr></thead>
+                                        <tbody>
+                                            <template x-for="usr in usersRegistry" :key="usr.email">
+                                                <tr>
+                                                    <td style="font-weight:600" x-text="usr.name"></td>
+                                                    <td style="font-family:monospace;font-size:12px;color:#6b7280" x-text="usr.email"></td>
+                                                    <td>
+                                                        <span style="padding:2px 9px;border-radius:100px;font-size:11px;font-weight:700;background:#EFF6FF;color:#1D4ED8" x-text="usr.role"></span>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn-sm btn-del" @click="deleteUserRegistryNode(usr)">Revoke</button>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Permissions matrix -->
+                            <div class="adm-card">
+                                <div class="adm-card-hd"><div class="adm-card-title">Role Permissions Matrix</div></div>
+                                <div class="p-4" style="overflow-x:auto">
+                                    <table style="width:100%;border-collapse:collapse;font-size:12px">
+                                        <thead>
+                                            <tr style="background:#f1f5f9">
+                                                <th style="padding:9px 13px;text-align:left;border:1px solid #e2e8f0">Permission</th>
+                                                <th style="padding:9px 13px;text-align:center;border:1px solid #e2e8f0;color:#C2410C">Super Admin</th>
+                                                <th style="padding:9px 13px;text-align:center;border:1px solid #e2e8f0;color:#1D4ED8">Admin</th>
+                                                <th style="padding:9px 13px;text-align:center;border:1px solid #e2e8f0;color:#166534">Editor</th>
+                                                <th style="padding:9px 13px;text-align:center;border:1px solid #e2e8f0;color:#9ca3af">Member</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td style="padding:9px 13px;border:1px solid #e2e8f0">Edit all content</td><td style="text-align:center;border:1px solid #e2e8f0">✅</td><td style="text-align:center;border:1px solid #e2e8f0">✅</td><td style="text-align:center;border:1px solid #e2e8f0">✅</td><td style="text-align:center;border:1px solid #e2e8f0">❌</td></tr>
+                                            <tr style="background:#f8fafc"><td style="padding:9px 13px;border:1px solid #e2e8f0">Manage users</td><td style="text-align:center;border:1px solid #e2e8f0">✅</td><td style="text-align:center;border:1px solid #e2e8f0">✅</td><td style="text-align:center;border:1px solid #e2e8f0">❌</td><td style="text-align:center;border:1px solid #e2e8f0">❌</td></tr>
+                                            <tr><td style="padding:9px 13px;border:1px solid #e2e8f0">Rename pages</td><td style="text-align:center;border:1px solid #e2e8f0">✅</td><td style="text-align:center;border:1px solid #e2e8f0">✅</td><td style="text-align:center;border:1px solid #e2e8f0">❌</td><td style="text-align:center;border:1px solid #e2e8f0">❌</td></tr>
+                                            <tr style="background:#f8fafc"><td style="padding:9px 13px;border:1px solid #e2e8f0">Change colors</td><td style="text-align:center;border:1px solid #e2e8f0">✅</td><td style="text-align:center;border:1px solid #e2e8f0">❌</td><td style="text-align:center;border:1px solid #e2e8f0">❌</td><td style="text-align:center;border:1px solid #e2e8f0">❌</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── THEME & COLORS ── -->
+                        <div x-show="adminSubTab === 'theme-settings'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd"><div class="adm-card-title">🎨 Theme & Color Settings</div></div>
+                                <div class="p-5 space-y-4">
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <div>
+                                            <label class="adm-label">Primary / Navy Color</label>
+                                            <div style="display:flex;gap:10px;align-items:center">
+                                                <input type="color" x-model="themeColors.navy" style="width:44px;height:36px;border-radius:7px;border:1px solid #e2e8f0;cursor:pointer">
+                                                <input type="text" x-model="themeColors.navy" class="adm-input" style="flex:1">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Accent / Sky Color</label>
+                                            <div style="display:flex;gap:10px;align-items:center">
+                                                <input type="color" x-model="themeColors.sky" style="width:44px;height:36px;border-radius:7px;border:1px solid #e2e8f0;cursor:pointer">
+                                                <input type="text" x-model="themeColors.sky" class="adm-input" style="flex:1">
+                                            <div>
+                                                  <label class="adm-label">Background Color</label>
+                                                   <div style="display:flex;gap:10px;align-items:center">
+                                                   <input type="color" x-model="themeColors.background"
+                                                    style="width:44px;height:36px;border-radius:7px;border:1px solid #e2e8f0;cursor:pointer">
+                                                  <input type="text" x-model="themeColors.background"
+                                                         class="adm-input" style="flex:1">
+    </div>
+</div>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex;gap:12px;padding:14px;border-radius:10px;border:1px solid #e2e8f0;background:#f8fafc;align-items:center">
+                                        <div style="width:48px;height:48px;border-radius:10px" :style="{background:themeColors.navy}"></div>
+                                        <div style="width:48px;height:48px;border-radius:10px" :style="{background:themeColors.sky}"></div>
+                                        <div style="font-size:12px;color:#6b7280">Live preview — changes apply to navbar, buttons, and headings instantly.</div>
+                                    </div>
+                                    <button class="btn-pri" @click="showToast('✅ Theme colors saved!')">💾 Apply Theme</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- end adm-main-panel -->
+                </div><!-- end admin grid -->
+            </div>
+        </template>
+    </div>
+
+</main>
+
+<!-- FOOTER (original) -->
+<footer class="text-white py-8 transition-colors duration-300" :style="{ backgroundColor: themeColors.navy }">
+    <div class="max-w-7xl mx-auto px-4 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-4 text-xs opacity-75">
+        <p>© 2026 Biophysics & Biomedical Engineering Lab, IIT Indore.</p>
+        <p>Powered by BPBME CMS</p>
+    </div>
+</footer>
+
+<!-- TOAST -->
+<div id="toast"><span>✅</span><span id="toast-msg">Done</span></div>
+
+<script>
+function labCMS() {
+    return {
+        activePage: 'home',
+        peopleFilter: 'All',
+        adminSubTab: 'dashboard',
+        adminPanelTitle: 'Dashboard',
+        pubSearch: '',
+        showAnnBar: true,
+        newAnnText: '',
+
+        // FORM SHOW FLAGS
+        showMemberForm: false,
+        showPubForm: false,
+        showOppForm: false,
+        showNewsForm: false,
+        showMediaForm: false,
+        showGalleryForm: false,
+
+        // EDITING IDs
+        editingMemberId: null,
+        editingPubId: null,
+        editingOppId: null,
+        editingNewsId: null,
+
+        // AUTH
+        isLoggedIn: false,
+        currentUser: null,
+        loginEmail: '',
+        loginPassword: '',
+        labLogo: '',
+
+        usersRegistry: [
+            { name: 'Dr. S. Gupta (Super Admin)', email: 'superadmin@iiti.ac.in', password: 'admin123', role: 'Super Admin' }
+        ],
+
+        themeColors: {
+    navy: '#0F4C81',
+    sky: '#4DA8DA',
+    background: '#F8FAFC'
+},
+
+        // PAGE NAMES — editable in admin
+        pageNames: {
+            home: 'Home',
+            research: 'Research',
+            people: 'Superstars',
+            publications: 'Publications',
+            opportunities: 'Opportunities',
+            contact: 'Contact'
+        },
+
+        menuOrder: ['Home', 'Research', 'People', 'Publications', 'Opportunities', 'Contact'],
+
+        // DATA
+        homeData: {
+            labCode: 'IIT Indore',
+            labSubName: 'Biophysics & Biomedical Engineering Lab',
+            headline: 'Biophysics & Biomedical Engineering Laboratory',
+            subheadline: 'Pushing the boundaries of light, life, and advanced diagnostic optics at Indian Institute of Technology Indore.',
+            piName: 'Dr. S. Gupta',
+            piRole: 'Associate Professor, Biosciences and Biomedical Engineering',
+            piImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+            piBio: `<p class="mb-2">Welcome to our research hub. Hamari lab ka core focus light waves aur biomedical structures ke interactions ko exploit karna hai.</p><p>We are engineering non-invasive computational diagnostic platforms for early-stage screening parameters, especially focusing on affordable Indian healthcare systems.</p>`
+        },
+
+        labMediaList: [
+            { id: 1, title: 'Spectroscopy Instrumentation Laser Run', type: 'image', url: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=400&q=80', desc: 'Capture overview run demonstrating diffuse optical tracking data filters.' },
+            { id: 2, title: 'Computational Diagnostic Interface Modeling', type: 'image', url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=400&q=80', desc: 'Real-time neural node matrix array processing system.' }
+        ],
+
+        news: [
+            { id: 1, date: 'June 05, 2026', text: 'Our advanced paper on Deep Biophotonics got accepted in Nature Framework Diagnostics.' },
+            { id: 2, date: 'May 18, 2026', text: 'Congratulations to PhD Scholar Amit Kumar for securing the Best Abstract presentation award at IEEE.' }
+        ],
+
+        gallery: [
+            { id: 1, title: 'Spectroscopy Setup', url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=400&q=80' },
+            { id: 2, title: 'Lab Cohort 2026', url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=400&q=80' }
+        ],
+
+        researchAreas: [
+            { id: 1, title: 'Biophotonics & Optical Tomography', desc: 'Developing non-ionizing diffuse laser mechanisms to slice and detect subdermal tumor metrics without conventional tissue biopsy workflows.' },
+            { id: 2, title: 'Nanobiotechnology & Drug Delivery', desc: 'Engineering functional nanomaterials for targeted drug delivery, biosensing, and disease diagnostics in affordable healthcare.' }
+        ],
+
+        people: [
+            { id: 1, name: 'Dr. S. Gupta', role: 'Principal Investigator', category: 'Faculty', email: 'sgupta@iiti.ac.in', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80', researchArea: 'Biophotonics Tomography Systems', scholarUrl: '', bio: 'Directing advanced diagnostic optics platforms.' },
+            { id: 2, name: 'Amit Kumar', role: 'Senior PhD Candidate', category: 'PhD', email: 'amit.k@iiti.ac.in', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80', researchArea: 'Deep Biophotonics Analytics', scholarUrl: 'https://scholar.google.com', bio: 'Focusing on Convolutional bio-sensor noise filters.' }
+        ],
+
+        publications: [
+            { id: 1, title: 'Diffuse Light Scattering Profiles in Multi-layered Phantom Tissues', authors: 'Gupta S., Kumar A.', journal: 'IEEE Transactions on Bio-Engineering', year: '2026', doi: '' },
+            { id: 2, title: 'Nanomaterial-based Biosensors for Early Cancer Diagnosis', authors: 'Gupta S., Sharma P., et al.', journal: 'Biosensors & Bioelectronics · Elsevier', year: '2025', doi: '' }
+        ],
+
+        opportunities: [
+            { id: 1, position: 'Research Intern Position Call', type: 'Internship', deadline: 'July 15, 2026', status: 'Open', desc: 'Work on advanced computational biophotonics instrumentation algorithms.' }
+        ],
+
+        announcements: [
+            'PhD Admissions Open 2026 – Apply Before July 31, 2026',
+            'New paper accepted in IEEE Transactions on Bio-Engineering – Congratulations to the team!',
+            'Internship positions available – Applications open for Summer 2026'
+        ],
+
+        // FORMS
+        teamForm: { name: '', role: '', category: 'PhD', email: '', scholarUrl: '', researchArea: '', img: '', bio: '' },
+        mediaForm: { title: '', type: 'image', url: '', desc: '' },
+        oppForm: { position: '', type: 'Internship', deadline: '', status: 'Open', desc: '' },
+        newsForm: { date: '', text: '' },
+        pubForm: { title: '', authors: '', journal: '', year: '', doi: '' },
+        userForm: { name: '', email: '', password: '', role: 'Admin' },
+        galleryForm: { title: '', url: '' },
+
+        // ── AUTH ──
+        handleLogin() {
+            const match = this.usersRegistry.find(u => u.email === this.loginEmail && u.password === this.loginPassword);
+            if (match) {
+                this.isLoggedIn = true;
+                this.currentUser = match;
+                this.activePage = 'admin';
+            } else {
+                alert('❌ Invalid credentials. Please try again.');
+            }
+        },
+        handleLogout() {
+            this.isLoggedIn = false;
+            this.currentUser = null;
+            this.activePage = 'home';
+        },
+        provisionUser() {
+            if (!this.userForm.email || !this.userForm.name) { alert('Please fill all fields.'); return; }
+            this.usersRegistry.push({ ...this.userForm });
+            this.showToast('✅ User created successfully!');
+            this.userForm = { name: '', email: '', password: '', role: 'Admin' };
+        },
+        deleteUserRegistryNode(targetUsr) {
+            if (targetUsr.email === this.currentUser.email) {
+                const countSuper = this.usersRegistry.filter(u => u.role === 'Super Admin').length;
+                if (countSuper <= 1) { alert('🚫 Cannot revoke your own access when you are the only Super Admin.'); return; }
+                if (confirm('⚠️ You are revoking your own access. Continue?')) {
+                    this.usersRegistry = this.usersRegistry.filter(u => u.email !== targetUsr.email);
+                    this.handleLogout();
+                }
+            } else {
+                this.usersRegistry = this.usersRegistry.filter(u => u.email !== targetUsr.email);
+                this.showToast('User access revoked.');
+            }
+        },
+
+        // ── TEAM MEMBERS ──
+        openAddMemberForm() {
+            this.editingMemberId = null;
+            this.teamForm = { name: '', role: '', category: 'PhD', email: '', scholarUrl: '', researchArea: '', img: '', bio: '' };
+            this.showMemberForm = true;
+        },
+        editMemberForm(p) {
+            this.editingMemberId = p.id;
+            this.teamForm = { ...p };
+            this.showMemberForm = true;
+        },
+        saveMember() {
+            if (!this.teamForm.name) { this.showToast('⚠️ Name is required'); return; }
+            if (this.editingMemberId) {
+                const i = this.people.findIndex(p => p.id === this.editingMemberId);
+                if (i > -1) this.people[i] = { ...this.people[i], ...this.teamForm };
+                this.showToast('✅ Member updated!');
+            } else {
+                this.people.push({ id: Date.now(), ...this.teamForm });
+                this.showToast('✅ Member added!');
+            }
+            this.showMemberForm = false;
+            this.editingMemberId = null;
+        },
+
+        // ── PUBLICATIONS ──
+        editPub(pub) {
+            this.editingPubId = pub.id;
+            this.pubForm = { ...pub };
+            this.showPubForm = true;
+        },
+        savePub() {
+            if (!this.pubForm.title || !this.pubForm.authors) { this.showToast('⚠️ Title & Authors required'); return; }
+            if (this.editingPubId) {
+                const i = this.publications.findIndex(p => p.id === this.editingPubId);
+                if (i > -1) this.publications[i] = { ...this.publications[i], ...this.pubForm };
+                this.showToast('✅ Publication updated!');
+            } else {
+                this.publications.push({ id: Date.now(), ...this.pubForm });
+                this.showToast('✅ Publication added!');
+            }
+            this.showPubForm = false;
+            this.editingPubId = null;
+        },
+
+        // ── OPPORTUNITIES ──
+        editOpp(o) {
+            this.editingOppId = o.id;
+            this.oppForm = { ...o };
+            this.showOppForm = true;
+        },
+        saveOpp() {
+            if (!this.oppForm.position) { this.showToast('⚠️ Position title required'); return; }
+            if (this.editingOppId) {
+                const i = this.opportunities.findIndex(x => x.id === this.editingOppId);
+                if (i > -1) this.opportunities[i] = { ...this.opportunities[i], ...this.oppForm };
+                this.showToast('✅ Updated!');
+            } else {
+                this.opportunities.push({ id: Date.now(), ...this.oppForm });
+                this.showToast('✅ Opportunity added!');
+            }
+            this.showOppForm = false;
+            this.editingOppId = null;
+        },
+
+        // ── NEWS ──
+        editNews(n) {
+            this.editingNewsId = n.id;
+            this.newsForm = { ...n };
+            this.showNewsForm = true;
+        },
+        saveNews() {
+            if (!this.newsForm.text) { this.showToast('⚠️ News text required'); return; }
+            if (this.editingNewsId) {
+                const i = this.news.findIndex(x => x.id === this.editingNewsId);
+                if (i > -1) this.news[i] = { ...this.news[i], ...this.newsForm };
+                this.showToast('✅ Updated!');
+            } else {
+                this.news.push({ id: Date.now(), ...this.newsForm });
+                this.showToast('✅ News added!');
+            }
+            this.showNewsForm = false;
+            this.editingNewsId = null;
+        },
+
+        // ── RESEARCH AREAS ──
+        addResearchArea() {
+            const t = prompt('Research Area Title:');
+            if (!t) return;
+            const d = prompt('Short Description:') || 'Description here...';
+            this.researchAreas.push({ id: Date.now(), title: t, desc: d });
+            this.showToast('✅ Research area added!');
+        },
+        editRA(r) {
+            const t = prompt('Edit Title:', r.title);
+            if (t === null) return;
+            const d = prompt('Edit Description:', r.desc);
+            const i = this.researchAreas.findIndex(x => x.id === r.id);
+            if (i > -1) { this.researchAreas[i].title = t; if (d !== null) this.researchAreas[i].desc = d; }
+            this.showToast('✅ Updated!');
+        },
+
+        // ── MEDIA & GALLERY ──
+        addLabMedia() {
+            if (!this.mediaForm.title || !this.mediaForm.url) { this.showToast('⚠️ Title & URL required'); return; }
+            this.labMediaList.push({ id: Date.now(), ...this.mediaForm });
+            this.showToast('✅ Media added!');
+            this.mediaForm = { title: '', type: 'image', url: '', desc: '' };
+        },
+        addGalleryItem() {
+            if (!this.galleryForm.title || !this.galleryForm.url) { this.showToast('⚠️ Title & URL required'); return; }
+            this.gallery.push({ id: Date.now(), ...this.galleryForm });
+            this.showToast('✅ Photo added to gallery!');
+            this.galleryForm = { title: '', url: '' };
+        },
+
+        // ── ANNOUNCEMENTS ──
+        addAnn() {
+            if (!this.newAnnText.trim()) { this.showToast('⚠️ Enter announcement text'); return; }
+            this.announcements.push(this.newAnnText.trim());
+            this.newAnnText = '';
+            this.showToast('✅ Announcement added!');
+        },
+        editAnn(i) {
+            const t = prompt('Edit announcement:', this.announcements[i]);
+            if (t === null) return;
+            this.announcements[i] = t;
+            this.showToast('✅ Updated!');
+        },
+        deleteAnn(i) {
+            this.announcements.splice(i, 1);
+            this.showToast('Announcement removed.');
+        },
+
+        // ── PAGE NAMES ──
+        resetPageNames() {
+            this.pageNames = { home:'Home', research:'Research', people:'Superstars', publications:'Publications', opportunities:'Opportunities', contact:'Contact' };
+            this.showToast('✅ Page names reset to defaults.');
+        },
+
+        // ── MENU ORDER ──
+        moveMenuUp(idx) {
+            if (idx <= 0) return;
+            const arr = [...this.menuOrder];
+            [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]];
+            this.menuOrder = arr;
+        },
+        moveMenuDown(idx) {
+            if (idx >= this.menuOrder.length - 1) return;
+            const arr = [...this.menuOrder];
+            [arr[idx + 1], arr[idx]] = [arr[idx], arr[idx + 1]];
+            this.menuOrder = arr;
+        },
+
+        // ── COMPUTED ──
+        get filteredPublications() {
+            if (!this.pubSearch) return this.publications;
+            return this.publications.filter(p =>
+                p.title.toLowerCase().includes(this.pubSearch.toLowerCase()) ||
+                p.authors.toLowerCase().includes(this.pubSearch.toLowerCase())
+            );
+        },
+
+        // ── TOAST ──
+        showToast(msg) {
+            const el = document.getElementById('toast');
+            const m = document.getElementById('toast-msg');
+            if (!el || !m) return;
+            m.textContent = msg;
+            el.classList.add('show');
+            clearTimeout(el._t);
+            el._t = setTimeout(() => el.classList.remove('show'), 3000);
+        },
+
+        // ── LUCIDE ICONS REFRESH ──
+        refreshIcons() {
+            setTimeout(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); }, 60);
+        },
+        init() {
+            this.$watch('activePage', () => this.refreshIcons());
+            this.$watch('adminSubTab', () => this.refreshIcons());
+            this.refreshIcons();
+        }
+    }
+}
+</script>
+</body>
+</html>
